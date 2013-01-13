@@ -20,6 +20,14 @@ def clobber_output_dir
   FileUtils.mkdir(OUTPUT_DIR)
 end
 
+def summary_text(versions)
+  if versions.empty?
+    "None."
+  else
+    versions.join(', ')
+  end
+end
+
 
 # Processing
 check_out_clean_rails_repo
@@ -60,6 +68,10 @@ FileUtils.cd('rails') do
     end
     puts "Done processing #{tag}."
   end
+
+  puts "Summary:"
+  puts "  Successfully generated guides for: #{summary_text(successfully_generated)}"
+  puts "  Failed to generate guides for: #{summary_text(failed_to_generate)}"
 end
 
 
