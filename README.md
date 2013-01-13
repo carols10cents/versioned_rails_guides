@@ -5,7 +5,7 @@ Versioned Rails Guides
 latest. You like to use the Rails Guides for reference. The version of the
 Rails guides on [guides.rubyonrails.org](http://guides.rubyonrails.org/) is
 for a different version of Rails than what your legacy project is running,
-so it's not helpful.
+so sometimes what the guides say doesn't match what you need to do.
 
 **Solution:**
 
