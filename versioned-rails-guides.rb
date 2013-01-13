@@ -32,6 +32,9 @@ FileUtils.cd('rails') do
                             t.match(/^#{released_version_regex}$/)
                           }
 
+  successfully_generated = []
+  failed_to_generate     = []
+
   released_version_tags.each do |tag|
     tag_output_directory = File.join(OUTPUT_DIR, tag)
 
@@ -49,6 +52,11 @@ FileUtils.cd('rails') do
       puts "  Copying complete."
     else
       puts "  No Gemfile. I quit."
+    end
+    if File.exists?(File.join(tag_output_directory, 'index.html'))
+      successfully_generated << tag
+    else
+      failed_to_generate << tag
     end
     puts "Done processing #{tag}."
   end
