@@ -8,6 +8,7 @@ for a different version of Rails than what your legacy project is running,
 so it's not helpful.
 
 **Solution:**
+
 ![Generate guides for ALL THE RAILS VERSIONS!!!!](https://raw.github.com/carols10cents/versioned_rails_guides/master/images/alltherailsversions.png)
 
 Usage
