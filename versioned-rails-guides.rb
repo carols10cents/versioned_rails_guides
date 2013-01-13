@@ -2,7 +2,7 @@
 require 'fileutils'
 
 # Useful values
-RAILS_REPO_LOCATION = '~/Ruby/rails'
+RAILS_REPO_LOCATION = 'git://github.com/rails/rails.git'
 RAILS_CHECKOUT      = 'rails'
 BASE_DIR            = File.expand_path(File.dirname(__FILE__))
 OUTPUT_DIR          = File.join(BASE_DIR, 'output')
