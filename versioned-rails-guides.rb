@@ -33,6 +33,8 @@ FileUtils.cd('rails') do
                           }
 
   released_version_tags.each do |tag|
+    tag_output_directory = File.join(OUTPUT_DIR, tag)
+
     puts "Checking out Rails #{tag}"
     `git checkout #{tag} &> /dev/null`
     if File.exists?('Gemfile')
@@ -41,8 +43,8 @@ FileUtils.cd('rails') do
       puts "  Bundling complete. Generating guides..."
       FileUtils.cd('railties') do
         `bundle exec rake generate_guides ALL=1 RAILS_VERSION=#{tag} &> /dev/null`
-        puts "  Generating guides complete. Copying to #{OUTPUT_DIR}/#{tag}..."
-        `cp -R guides/output/ #{OUTPUT_DIR}/#{tag}`
+        puts "  Generating guides complete. Copying to #{tag_output_directory}..."
+        `cp -R guides/output/ #{tag_output_directory}`
       end
       puts "  Copying complete."
     else
