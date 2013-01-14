@@ -89,12 +89,15 @@ FileUtils.cd('rails') do
     puts "Done processing #{tag}."
   end
 
+  puts "Generating index..."
   index = VersionedRailsGuides::MetaIndexGenerator.new(successfully_generated)
   index.generate!
+  puts "Done generating index."
 
   puts "Summary:"
   puts "  Successfully generated guides for: #{VersionedRailsGuides::Utils.summary_text(successfully_generated)}"
   puts "  Failed to generate guides for: #{VersionedRailsGuides::Utils.summary_text(failed_to_generate)}"
+  puts "Open the index with open output/index.html"
 end
 
 
