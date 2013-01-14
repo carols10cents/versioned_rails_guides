@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'fileutils'
+require 'erb'
 
 # Useful values
 RAILS_REPO_LOCATION = 'git://github.com/rails/rails.git'
@@ -7,31 +8,50 @@ RAILS_CHECKOUT      = 'rails'
 BASE_DIR            = File.expand_path(File.dirname(__FILE__))
 OUTPUT_DIR          = File.join(BASE_DIR, 'output')
 
-# Utility functions
-def check_out_clean_rails_repo
-  puts "Checking out clean rails repo from #{RAILS_REPO_LOCATION} into #{RAILS_CHECKOUT}."
-  FileUtils.rm_r(RAILS_CHECKOUT) if Dir.exists?(RAILS_CHECKOUT)
-  `git clone #{RAILS_REPO_LOCATION} #{RAILS_CHECKOUT}`
-end
+module VersionedRailsGuides
+  module Utils
+    class << self
+      def check_out_clean_rails_repo
+        puts "Checking out clean rails repo from #{RAILS_REPO_LOCATION} into #{RAILS_CHECKOUT}."
+        FileUtils.rm_r(RAILS_CHECKOUT) if Dir.exists?(RAILS_CHECKOUT)
+        `git clone #{RAILS_REPO_LOCATION} #{RAILS_CHECKOUT}`
+      end
 
-def clobber_output_dir
-  puts "Cleaning up old output."
-  FileUtils.rm_r(OUTPUT_DIR) if Dir.exists?(OUTPUT_DIR)
-  FileUtils.mkdir(OUTPUT_DIR)
-end
+      def clobber_output_dir
+        puts "Cleaning up old output."
+        FileUtils.rm_r(OUTPUT_DIR) if Dir.exists?(OUTPUT_DIR)
+        FileUtils.mkdir(OUTPUT_DIR)
+      end
 
-def summary_text(versions)
-  if versions.empty?
-    "None."
-  else
-    versions.join(', ')
+      def summary_text(versions)
+        if versions.empty?
+          "None."
+        else
+          versions.join(', ')
+        end
+      end
+    end
+  end
+
+  class MetaIndexGenerator
+    def initialize(generated_tags)
+      @generated_tags = generated_tags
+    end
+
+    def generate!
+      homepage_template = ERB.new(
+        open(File.join(BASE_DIR, 'source', 'index.html.erb')).read
+      )
+      File.open(File.join(OUTPUT_DIR, 'index.html'), 'w') do |f|
+        f.puts homepage_template.result(binding)
+      end
+    end
   end
 end
 
-
 # Processing
-check_out_clean_rails_repo
-clobber_output_dir
+VersionedRailsGuides::Utils.check_out_clean_rails_repo
+VersionedRailsGuides::Utils.clobber_output_dir
 
 FileUtils.cd('rails') do
   all_tags = `git tag`.split("\n")
@@ -69,9 +89,12 @@ FileUtils.cd('rails') do
     puts "Done processing #{tag}."
   end
 
+  index = VersionedRailsGuides::MetaIndexGenerator.new(successfully_generated)
+  index.generate!
+
   puts "Summary:"
-  puts "  Successfully generated guides for: #{summary_text(successfully_generated)}"
-  puts "  Failed to generate guides for: #{summary_text(failed_to_generate)}"
+  puts "  Successfully generated guides for: #{VersionedRailsGuides::Utils.summary_text(successfully_generated)}"
+  puts "  Failed to generate guides for: #{VersionedRailsGuides::Utils.summary_text(failed_to_generate)}"
 end
 
 
