@@ -75,6 +75,10 @@ FileUtils.cd('rails') do
       `bundle`
       puts "  Bundling complete. Generating guides..."
       FileUtils.cd('railties') do
+        FileUtils.cp(
+          File.join(BASE_DIR, 'source', 'layout.html.erb'),
+          File.join('.', 'guides', 'source')
+        )
         `bundle exec rake generate_guides ALL=1 RAILS_VERSION=#{tag} &> /dev/null`
         puts "  Generating guides complete. Copying to #{tag_output_directory}..."
         `cp -R guides/output/ #{tag_output_directory}`
