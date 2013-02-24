@@ -35,7 +35,9 @@ module VersionedRailsGuides
 
   class MetaIndexGenerator
     def initialize(generated_tags)
-      @generated_tags = generated_tags
+      @generated_tags = generated_tags.sort_by { |tag|
+        tag.gsub(/^v/, '').split(/\./).map(&:to_i)
+      }
     end
 
     def generate!
