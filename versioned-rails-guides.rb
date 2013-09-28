@@ -3,7 +3,7 @@ require 'fileutils'
 require 'erb'
 
 # Useful values
-RAILS_REPO_LOCATION = '~/Ruby/rails/'
+RAILS_REPO_LOCATION = 'git://github.com/rails/rails.git'
 RAILS_CHECKOUT      = 'rails'
 BASE_DIR            = File.expand_path(File.dirname(__FILE__))
 OUTPUT_DIR          = File.join(BASE_DIR, 'output')
@@ -35,7 +35,9 @@ module VersionedRailsGuides
 
   class MetaIndexGenerator
     def initialize(generated_tags)
-      @generated_tags = generated_tags
+      @generated_tags = generated_tags.sort_by { |tag|
+        tag.gsub(/^v/, '').split(/\./).map(&:to_i)
+      }
     end
 
     def generate!
@@ -58,40 +60,38 @@ FileUtils.cd('rails') do
   released_version_regex = 'v3\.2\.\d+'
   released_version_tags = all_tags.select { |t|
                             t.match(/^#{released_version_regex}$/)
-                          }.sort_by { |t|
-                            t.split(/\./).map(&:to_i)
                           }
 
   successfully_generated = []
   failed_to_generate     = []
 
   released_version_tags.each do |tag|
-    # tag_output_directory = File.join(OUTPUT_DIR, tag)
-    #
-    # puts "Checking out Rails #{tag}"
-    # `git checkout #{tag} &> /dev/null`
-    # if File.exists?('Gemfile')
-    #   puts "  Gemfile found. Bundling..."
-    #   `bundle`
-    #   puts "  Bundling complete. Generating guides..."
-    #   FileUtils.cd('railties') do
-    #     FileUtils.cp(
-    #       File.join(BASE_DIR, 'source', 'layout.html.erb'),
-    #       File.join('.', 'guides', 'source')
-    #     )
-    #     `bundle exec rake generate_guides ALL=1 RAILS_VERSION=#{tag} &> /dev/null`
-    #     puts "  Generating guides complete. Copying to #{tag_output_directory}..."
-    #     `cp -R guides/output/ #{tag_output_directory}`
-    #   end
-    #   puts "  Copying complete."
-    # else
-    #   puts "  No Gemfile. I quit."
-    # end
-    # if File.exists?(File.join(tag_output_directory, 'index.html'))
+    tag_output_directory = File.join(OUTPUT_DIR, tag)
+
+    puts "Checking out Rails #{tag}"
+    `git checkout #{tag} &> /dev/null`
+    if File.exists?('Gemfile')
+      puts "  Gemfile found. Bundling..."
+      `bundle`
+      puts "  Bundling complete. Generating guides..."
+      FileUtils.cd('railties') do
+        FileUtils.cp(
+          File.join(BASE_DIR, 'source', 'layout.html.erb'),
+          File.join('.', 'guides', 'source')
+        )
+        `bundle exec rake generate_guides ALL=1 RAILS_VERSION=#{tag} &> /dev/null`
+        puts "  Generating guides complete. Copying to #{tag_output_directory}..."
+        `cp -R guides/output/ #{tag_output_directory}`
+      end
+      puts "  Copying complete."
+    else
+      puts "  No Gemfile. I quit."
+    end
+    if File.exists?(File.join(tag_output_directory, 'index.html'))
       successfully_generated << tag
-    # else
-    #   failed_to_generate << tag
-    # end
+    else
+      failed_to_generate << tag
+    end
     puts "Done processing #{tag}."
   end
 
