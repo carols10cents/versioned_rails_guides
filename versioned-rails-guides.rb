@@ -58,11 +58,11 @@ failed_to_generate     = []
 
 FileUtils.cd('rails') do
   all_tags = `git tag`.split("\n")
-  released_version_regex = 'v3\.2\.\d+'
+  released_version_regex = '(v3\.2\.\d+|v4\.\d+\.\d+)'
   released_version_tags = all_tags.select { |t|
                             t.match(/^#{released_version_regex}$/)
                           }.sort_by { |t|
-                            t.split(/\./).map(&:to_i)
+                            t.gsub(/^v/, '').split(/\./).map(&:to_i)
                           }
 
   released_version_tags.each do |tag|
