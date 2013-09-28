@@ -35,9 +35,7 @@ module VersionedRailsGuides
 
   class MetaIndexGenerator
     def initialize(generated_tags)
-      @generated_tags = generated_tags.sort_by { |tag|
-        tag.gsub(/^v/, '').split(/\./).map(&:to_i)
-      }
+      @generated_tags = generated_tags
     end
 
     def generate!
@@ -60,6 +58,8 @@ FileUtils.cd('rails') do
   released_version_regex = 'v3\.2\.\d+'
   released_version_tags = all_tags.select { |t|
                             t.match(/^#{released_version_regex}$/)
+                          }.sort_by { |t|
+                            t.split(/\./).map(&:to_i)
                           }
 
   successfully_generated = []
