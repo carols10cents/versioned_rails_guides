@@ -27,13 +27,7 @@ date)!
 Future improvements
 -------------------
 
-I would love help making this more useful, especially in these ways:
-
-* [Be able to generate more than the 3.2 series](https://github.com/carols10cents/versioned_rails_guides/issues/1)
-* [Show the version in the generated header](https://github.com/carols10cents/versioned_rails_guides/issues/2)
-* [Have a way to change the version in the generated header](https://github.com/carols10cents/versioned_rails_guides/issues/3)
-* [Have a master index page that links to all the versions](https://github.com/carols10cents/versioned_rails_guides/issues/4)
-* [Host this somewhere (heroku), and document how to get your own set hosted easily](https://github.com/carols10cents/versioned_rails_guides/issues/5)
+I would love help making this more useful -- please see [the open issues](https://github.com/carols10cents/versioned_rails_guides/issues).
 
 Contributing
 ------------
