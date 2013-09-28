@@ -53,6 +53,9 @@ end
 VersionedRailsGuides::Utils.check_out_clean_rails_repo
 VersionedRailsGuides::Utils.clobber_output_dir
 
+successfully_generated = []
+failed_to_generate     = []
+
 FileUtils.cd('rails') do
   all_tags = `git tag`.split("\n")
   released_version_regex = 'v3\.2\.\d+'
@@ -61,9 +64,6 @@ FileUtils.cd('rails') do
                           }.sort_by { |t|
                             t.split(/\./).map(&:to_i)
                           }
-
-  successfully_generated = []
-  failed_to_generate     = []
 
   released_version_tags.each do |tag|
     tag_output_directory = File.join(OUTPUT_DIR, tag)
@@ -99,12 +99,25 @@ FileUtils.cd('rails') do
   index = VersionedRailsGuides::MetaIndexGenerator.new(successfully_generated)
   index.generate!
   puts "Done generating index."
-
-  puts "Summary:"
-  puts "  Successfully generated guides for: #{VersionedRailsGuides::Utils.summary_text(successfully_generated)}"
-  puts "  Failed to generate guides for: #{VersionedRailsGuides::Utils.summary_text(failed_to_generate)}"
-  puts "Open the index with `open output/index.html`"
 end
+
+puts "Checking out gh-pages branch."
+`git checkout gh-pages`
+puts "Removing old gh-pages guides content."
+`rm -rf v*`
+puts "Moving newly generated guides to the top level."
+`mv output/* .`
+puts "Adding any new versions to git."
+`git add .`
+puts "Committing to the gh-pages branch."
+`git commit -am "Updating gh-pages with newest content"`
+puts "Pushing the gh-pages branch to github."
+`git push origin gh-pages`
+
+puts "Summary:"
+puts "  Successfully generated guides for: #{VersionedRailsGuides::Utils.summary_text(successfully_generated)}"
+puts "  Failed to generate guides for: #{VersionedRailsGuides::Utils.summary_text(failed_to_generate)}"
+puts "Open the index with `open output/index.html`"
 
 
 # For each tag of a released version after 2.3.x

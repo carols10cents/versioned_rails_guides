@@ -18,8 +18,11 @@ Run the script:
 
     ./versioned-rails-guides.rb
 
-and this will generate the guides for all the rails versions in the 3.2 series
-in the `output` directory.
+and this will generate the guides for all the rails versions in the 3.2 series,
+put them on your gh-pages branch on github, and then they will be available to
+you at http://your-github-username.github.io/versioned_rails_guides. [Check out
+mine](http://carols10cents.github.io/versioned_rails_guides/) (might be out of
+date)!
 
 Future improvements
 -------------------
